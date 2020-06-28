@@ -4,7 +4,7 @@
 ## SavedVariables: AlphaScry_Account
 ## SavedVariables: AlphaScry_Character
 ## Author: mesota
-## Description: Lists all scryable antiquities
+## Description: Anything you need to manage your leads
 ## IsLibrary: false
 
 AlphaScry.lua
