@@ -1,0 +1,9 @@
+<Bindings>
+    <Layer name="SI_KEYBINDINGS_LAYER_GENERAL">
+        <Category name="|cFFAA33AlphaScry|r">
+            <Action name="ALPHASCRY_LIST_HINTS">
+                <Down>ASY.ListHints()</Down>
+            </Action>
+        </Category>
+    </Layer>
+</Bindings>

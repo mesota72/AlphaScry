@@ -1,0 +1,11 @@
+## Title: |cFFAA33AlphaScry|r v0.0.1
+## APIVersion: 100031
+## Version: 0.0.1
+## SavedVariables: AlphaScry_Account
+## SavedVariables: AlphaScry_Character
+## Author: mesota
+## Description: Lists all scryable antiquities
+## IsLibrary: false
+
+AlphaScry.lua
+
