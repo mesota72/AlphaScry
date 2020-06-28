@@ -3,7 +3,7 @@
 ## Version: 0.0.1
 ## SavedVariables: AlphaScry_Account
 ## SavedVariables: AlphaScry_Character
-## Author: mesota
+## Author: mesota and person345
 ## Description: Anything you need to manage your leads
 ## IsLibrary: false
 
