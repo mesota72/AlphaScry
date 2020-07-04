@@ -1,0 +1,66 @@
+<GuiXml>
+	<Controls>
+		<TopLevelControl name="ASYChangeFilterDialog" inherits="ZO_CustomDialogBase">
+			<Dimensions x="800" y="225" />
+			<Anchor point="CENTER" offsetY="-45" />
+			<Controls>
+				<Control name="$(parent)Content" inherits="ZO_DialogContentAnchors">
+					<Controls>
+						<!-- Section InProgress -->
+						<Button name="$(parent)ShowInProgressCheck" inherits="ZO_CheckButton">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="5" offsetY="5" />
+                    		<OnClicked>
+                        		ZO_CheckButton_OnClicked(...)
+                    		</OnClicked>
+						</Button>
+
+                        <Label name="$(parent)ShowInProgressLabel" font="ZoFontGame" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" horizontalAlignment="LEFT" text="Show in progress">
+							<Anchor point="LEFT" relativeTo="$(parent)ShowInProgressCheck" relativePoint="RIGHT" offsetX="5"  />
+                        </Label>
+
+						<!-- Section Available -->
+						<Button name="$(parent)ShowAvailableCheck" inherits="ZO_CheckButton">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)ShowInProgressCheck" relativePoint="BOTTOMLEFT" offsetY="3" />
+                    		<OnClicked>
+                        		ZO_CheckButton_OnClicked(...)
+                    		</OnClicked>
+						</Button>
+
+                        <Label name="$(parent)ShowAvailableLabel" font="ZoFontGame" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" horizontalAlignment="LEFT" text="Show available">
+							<Anchor point="LEFT" relativeTo="$(parent)ShowAvailableCheck" relativePoint="RIGHT" offsetX="5"  />
+                        </Label>
+
+						<!-- Section Requires Lead -->
+						<Button name="$(parent)ShowRequiresLeadCheck" inherits="ZO_CheckButton">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)ShowAvailableCheck" relativePoint="BOTTOMLEFT" offsetY="3" />
+                    		<OnClicked>
+                        		ZO_CheckButton_OnClicked(...)
+                    		</OnClicked>
+						</Button>
+
+                        <Label name="$(parent)ShowRequiresLeadLabel" font="ZoFontGame" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" horizontalAlignment="LEFT" text="Show requires lead">
+							<Anchor point="LEFT" relativeTo="$(parent)ShowRequiresLeadCheck" relativePoint="RIGHT" offsetX="5"  />
+                        </Label>
+
+						<!-- Show All Zones  -->
+						<Button name="$(parent)ShowAllZonesCheck" inherits="ZO_CheckButton">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)ShowRequiresLeadCheck" relativePoint="BOTTOMLEFT" offsetY="5" />
+                    		<OnClicked>
+                        		ZO_CheckButton_OnClicked(...)
+                    		</OnClicked>
+						</Button>
+
+                        <Label name="$(parent)ShowAllZonesLabel" font="ZoFontGame" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" horizontalAlignment="LEFT" text="Show leads of all zones">
+							<Anchor point="LEFT" relativeTo="$(parent)ShowAllZonesCheck" relativePoint="RIGHT" offsetX="5"  />
+                        </Label>
+
+
+
+					</Controls>
+				</Control>
+				<Control name="$(parent)Cancel" inherits="ZO_CustomDialogButton" />
+				<Control name="$(parent)Accept" inherits="ZO_CustomDialogButton" />
+			</Controls>
+		</TopLevelControl>
+	</Controls>
+</GuiXml>

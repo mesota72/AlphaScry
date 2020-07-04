@@ -7,5 +7,11 @@
 ## Description: Anything you need to manage your leads
 ## IsLibrary: false
 
+
+## UI
+dialogs/ASYChangeFilterDialog.xml
+dialogs/ASYChangeFilterDialog.lua
+
+## Main
 AlphaScry.lua
 

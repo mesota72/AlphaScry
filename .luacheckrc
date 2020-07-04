@@ -14,6 +14,8 @@ globals = {
 -- AlphaScry
 "ASY", 
 "ASY_Main",   
+"ASYCFD",
+"ASYChangeFilterDialog",
 }
 
 -- these globals can only be accessed.
@@ -26,6 +28,10 @@ read_globals = {
 -- ESO API
     "GuiRoot",
     "ZO_PlayerInventoryBackpack",
+    "ZO_CheckButton_IsChecked",
+    "ZO_DefaultAntiquitySortComparison",
+    "ZO_CheckButton_SetChecked",
+    "ZO_CheckButton_SetUnchecked",
     "ZO_PlayerBankBackpack",
     "ZO_SmithingTopLevelDeconstructionPanelInventoryBackpack",
     "ZO_SmithingTopLevelImprovementPanelInventoryBackpack",

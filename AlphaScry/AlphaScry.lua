@@ -7,8 +7,17 @@ ASY.author = 'mesota'
 ASY.init = false
 ASY.accountVariableVersion = 1
 ASY.characterVariableVersion = 1
-ASY.isDebug = false
-ASY.isShowAll = false
+ASY.isDebug = true
+ASY.useCustomFilter = false
+
+ASY.ZO_SortFunction = nil
+
+ASY.scryFilter = {
+    showInProgrese = true,
+    showAvailable = true,
+    showRequiresLead = true,
+    showAllZones = true
+}
 
 
 -- ESO globals
@@ -82,25 +91,44 @@ end
 --]]
 
 
-function ASY:CustomMeetsAllScryingRequirements()
-    return not self:HasAchievedAllGoals() and self:MeetsLeadRequirements() and self:MeetsScryingSkillRequirements() -- and self:GetQuality() > 1
+-- Sort by Discovered, Quality (ascending) and Antiquity Name (ascending).
+function ASYSortFunction(leftAntiquityData, rightAntiquityData)
+    trace ("ASYSortFunction")
+
+    if leftAntiquityData:HasDiscovered() ~= rightAntiquityData:HasDiscovered() then
+        return leftAntiquityData:HasDiscovered()
+    elseif leftAntiquityData:GetQuality() < rightAntiquityData:GetQuality() then
+        return true
+    elseif leftAntiquityData:GetQuality() == rightAntiquityData:GetQuality() then
+        return ZO_Antiquity.CompareNameTo(leftAntiquityData, rightAntiquityData)
+    end
+
+    return false
 end
 
 
 
-function ASY.ToggleShowAll()
-    trace ("Toggle Show All")
-    ASY.isShowAll = not ASY.isShowAll
+function ASY:CustomMeetsAllScryingRequirements()
+    return not self:HasAchievedAllGoals() and self:MeetsLeadRequirements() and self:MeetsScryingSkillRequirements() -- and self:GetQuality() > 1
+end
 
+function ASY.ApplyFilter()
+    trace ("ASY.ApplyFilter")
+        
+    _G.ZO_DefaultAntiquitySortComparison = _G.ASYSortFunction
+
+
+    ASY.useCustomFilter = true
+    local scryFilter = ASY.scryFilter
     local filterfunc
-
-    if ASY.isShowAll then
+    
+    if scryFilter.showAllZones then
         filterfunc = ASY.CustomMeetsAllScryingRequirements
-        ASY.ToggleButton:SetState(BSTATE_PRESSED)
     else
         filterfunc = ZO_Antiquity.MeetsAllScryingRequirements
-        ASY.ToggleButton:SetState(BSTATE_NORMAL)
     end
+
+    ASY.ToggleButton:SetState(BSTATE_PRESSED)
 
     for _, antiquityData in pairs (ADM.antiquities) do
         antiquityData.MeetsAllScryingRequirements = filterfunc
@@ -109,20 +137,61 @@ function ASY.ToggleShowAll()
     ADM:RefreshAll()
 end
 
+function ASY.ClearFilter()
+    trace ("ASY.ClearFilter")
+
+   _G.ZO_DefaultAntiquitySortComparison = ASY.ZO_SortFunction
+
+    local filterfunc = ZO_Antiquity.MeetsAllScryingRequirements
+    ASY.ToggleButton:SetState(BSTATE_NORMAL)
+    
+    for _, antiquityData in pairs (ADM.antiquities) do
+        antiquityData.MeetsAllScryingRequirements = filterfunc
+    end 
+
+    ADM:RefreshAll()
+end
+
+
+function ASY.ShowChangeFilterDialog() 
+    trace ("ASY.ShowChangeFilterDialog")
+    ZO_Dialogs_ShowDialog("ASY_CHANGE_FILTER_DIALOG", {})
+end
+
+function ASY.ToggleShowAll()
+    trace ("ASY.ToggleShowAll")
+    ASY.useCustomFilter = not ASY.useCustomFilter
+
+    if ASY.useCustomFilter then
+        ASY.ApplyFilter()
+    else
+        ASY.ClearFilter()
+    end
+end
+
 function ASY.InitButton()
     -- create button
     local cParent = WM:GetControlByName("ZO_AntiquityJournal_Keyboard_TopLevelContents")
     local cSearch = cParent:GetNamedChild("Search")
 
-    local c = WM:CreateControl('ASY_ToggleButton', cParent, CT_BUTTON)
-    c:SetAnchor(BOTTOMRIGHT, cSearch, TOPRIGHT, 0, 0)
-    c:SetDimensions(25, 25)
-    c:SetNormalTexture('esoui/art/inventory/inventory_tabicon_all_up.dds')
-    c:SetPressedTexture('esoui/art/inventory/inventory_tabicon_all_down.dds')
-    c:SetMouseOverTexture('esoui/art/inventory/inventory_tabicon_all_over.dds')
-    c:SetHandler('OnClicked',function() ASY.ToggleShowAll() end)
+    -- toggle button
+    local cTB = WM:CreateControl('ASY_ToggleButton', cParent, CT_BUTTON)
+    cTB:SetAnchor(BOTTOMRIGHT, cSearch, TOPRIGHT, 0, 0)
+    cTB:SetDimensions(25, 25)
+    cTB:SetNormalTexture('esoui/art/inventory/inventory_tabicon_all_up.dds')
+    cTB:SetPressedTexture('esoui/art/inventory/inventory_tabicon_all_down.dds')
+    cTB:SetMouseOverTexture('esoui/art/inventory/inventory_tabicon_all_over.dds')
+    cTB:SetHandler('OnClicked',function() ASY.ToggleShowAll() end)
+    ASY.ToggleButton = cTB
 
-    ASY.ToggleButton = c
+    -- change filter button
+    local cCF = WM:CreateControl('ASY_ChangeFilterButton', cParent, CT_BUTTON)
+    cCF:SetAnchor(RIGHT, cTB, LEFT, -5, 0)
+    cCF:SetDimensions(25, 25)
+    cCF:SetNormalTexture('esoui/art/chatwindow/chat_options_up.dds')
+    cCF:SetPressedTexture('esoui/art/chatwindow/chat_options_down.dds')
+    cCF:SetMouseOverTexture('esoui/art/chatwindow/chat_options_over.dds')
+    cCF:SetHandler('OnClicked',function() ASY.ShowChangeFilterDialog() end)
 end
 
 
@@ -133,6 +202,9 @@ function ASY:Initialize()
     
     -- Create Key Binding Labels
     -- ZO_CreateStringId('SI_BINDING_NAME_ALPHASCRY_LIST_HINTS', "Show Hints")	
+
+    -- save sort function
+    ASY.ZO_SortFunction = ZO_DefaultAntiquitySortComparison
 
     -- initialize toggle button
 	zo_callLater(ASY.InitButton, 900)
