@@ -7,7 +7,7 @@ ASY.author = 'mesota'
 ASY.init = false
 ASY.accountVariableVersion = 1
 ASY.characterVariableVersion = 1
-ASY.isDebug = true
+ASY.isDebug = false
 ASY.useCustomFilter = false
 
 ASY.ZO_SortFunction = nil
