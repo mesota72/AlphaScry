@@ -6,6 +6,9 @@ Dialog to change filter settings
 
 ASYCFD = {}
 
+
+ASYCFD.minimumQuality = 1
+
 function ASYCFD:Commit(control)
 
     local ctrlContent = GetControl(control, "Content")
@@ -18,10 +21,9 @@ function ASYCFD:Commit(control)
 
 	local scryFilter = ASY.scryFilter
 
-    scryFilter.showInProgress = getCheckState("ShowInProgressCheck")
-    scryFilter.showAvailable = getCheckState("ShowAvailableCheck")
-    scryFilter.showRequiresLead = getCheckState("ShowRequiresLeadCheck")
+    scryFilter.showBasicLeads = getCheckState("ShowBasicLeadsCheck")
     scryFilter.showAllZones = getCheckState("ShowAllZonesCheck")
+    scryFilter.minimumQuality = ASYCFD.minimumQuality
 	
     ASY.ApplyFilter()
 end
@@ -42,11 +44,56 @@ function ASYCFD:Setup(control)
 
 	local scryFilter = ASY.scryFilter
 
-    setCheckState ("ShowInProgressCheck",scryFilter.showInProgress)
-    setCheckState ("ShowAvailableCheck",scryFilter.showAvailable)
-    setCheckState ("ShowRequiresLeadCheck",scryFilter.showRequiresLead)
+    setCheckState ("ShowBasicLeadsCheck",scryFilter.showBasicLeads)
     setCheckState ("ShowAllZonesCheck",scryFilter.showAllZones)
+
+    local comboMinQuality = ZO_ComboBox_ObjectFromContainer(ctrlContent:GetNamedChild("MinQualityDropdown"))
+    ASYCFD.SetupMinQualityCombo(comboMinQuality, scryFilter.minimumQuality)
 end
+
+
+function ASYCFD.SetupMinQualityCombo(dropdown, minQuality)
+    local QUALITY_NAMES = {
+        [0]={"Trash"},
+        [1]={"Normal"},
+        [2]={"Fine"},
+        [3]={"Superior"},
+        [4]={"Epic"},
+        [5]={"Legendary"},
+        [6]={"Mythic"}
+    }
+
+
+    dropdown:ClearItems()
+    dropdown:SetSortsItems(false)
+    ASYCFD.minimumQuality = minQuality
+
+    local function OnQualityEntrySelected(_, _, entry)
+        ASYCFD.minimumQuality = entry.minQuality
+    end
+
+    local defaultEntry
+
+    -- Add quality items
+    for qualityId = 0, 5 do
+
+        local colorDef = GetAntiquityQualityColor(qualityId)
+        local name = colorDef:Colorize(unpack(QUALITY_NAMES[qualityId]))
+
+        local entry = ZO_ComboBox:CreateItemEntry(name, OnQualityEntrySelected)
+        entry.minQuality = qualityId
+        dropdown:AddItem(entry, ZO_COMBOBOX_SUPRESS_UPDATE)
+
+        if minQuality == qualityId then
+            defaultEntry = entry
+        end
+    end
+
+    dropdown:UpdateItems()
+    dropdown:SelectItem(defaultEntry)
+end
+
+
 
 
 function ASYCFD.Initialize()

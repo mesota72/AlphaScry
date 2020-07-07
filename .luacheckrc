@@ -76,6 +76,7 @@ read_globals = {
     "GetZoneNameById",
     "ITEMTYPE_POISON",
     "GetItemLinkEquipType",
+    "GetAntiquityQualityColor",
     "EQUIP_TYPE_TWO_HAND",
     "EQUIP_TYPE_ONE_HAND",
     "EQUIP_TYPE_OFF_HAND",

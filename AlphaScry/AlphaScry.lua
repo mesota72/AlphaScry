@@ -2,7 +2,7 @@ ASY = {}
 
 ASY.name = 'AlphaScry'
 ASY.displayname = 'AlphaScry'
-ASY.version = 'v0.0.1'
+ASY.version = 'v0.0.2'
 ASY.author = 'mesota'
 ASY.init = false
 ASY.accountVariableVersion = 1
@@ -13,17 +13,16 @@ ASY.useCustomFilter = false
 ASY.ZO_SortFunction = nil
 
 ASY.scryFilter = {
-    showInProgrese = true,
-    showAvailable = true,
-    showRequiresLead = true,
-    showAllZones = true
+    showBasicLeads = true,
+    showAllZones = true,
+    minimumQuality = 1
 }
 
 
 -- ESO globals
 local EM, WM, SM = EVENT_MANAGER, WINDOW_MANAGER, SCENE_MANAGER
 local AM = ANTIQUITY_MANAGER
-local ADM = ANTIQUITY_DATA_MANAGER -- ZO_AntiquityDataManager
+local ADM = ANTIQUITY_DATA_MANAGER 
 
 --- Writes trace messages to the console
 -- fmt with %d, %s,
@@ -90,6 +89,9 @@ function ZO_Antiquity:MeetsAllScryingRequirements()
 end
 --]]
 
+--[[
+
+sorting not available 
 
 -- Sort by Discovered, Quality (ascending) and Antiquity Name (ascending).
 function ASYSortFunction(leftAntiquityData, rightAntiquityData)
@@ -106,28 +108,34 @@ function ASYSortFunction(leftAntiquityData, rightAntiquityData)
     return false
 end
 
+--]]
 
+
+-- based on
+-- https://github.com/esoui/esoui/blob/master/esoui/ingame/antiquities/antiquitydata.lua
 
 function ASY:CustomMeetsAllScryingRequirements()
-    return not self:HasAchievedAllGoals() and self:MeetsLeadRequirements() and self:MeetsScryingSkillRequirements() -- and self:GetQuality() > 1
+    -- trace ("ASY.CustomMeetsAllScryingRequirements")
+
+    local scryFilter = ASY.scryFilter
+
+    -- Zone filter
+    if not scryFilter.showAllZones and not self:IsInCurrentPlayerZone() then return false end
+
+    -- Requires lead filter
+    if not scryFilter.showBasicLeads and not self:RequiresLead() then return false end
+
+    -- Quality filter
+    if scryFilter.minimumQuality > self:GetQuality() then return false end
+
+    return not self:HasAchievedAllGoals() and self:MeetsLeadRequirements() and self:MeetsScryingSkillRequirements()
 end
 
 function ASY.ApplyFilter()
     trace ("ASY.ApplyFilter")
         
-    _G.ZO_DefaultAntiquitySortComparison = _G.ASYSortFunction
-
-
     ASY.useCustomFilter = true
-    local scryFilter = ASY.scryFilter
-    local filterfunc
-    
-    if scryFilter.showAllZones then
-        filterfunc = ASY.CustomMeetsAllScryingRequirements
-    else
-        filterfunc = ZO_Antiquity.MeetsAllScryingRequirements
-    end
-
+    local filterfunc = ASY.CustomMeetsAllScryingRequirements
     ASY.ToggleButton:SetState(BSTATE_PRESSED)
 
     for _, antiquityData in pairs (ADM.antiquities) do
@@ -140,8 +148,7 @@ end
 function ASY.ClearFilter()
     trace ("ASY.ClearFilter")
 
-   _G.ZO_DefaultAntiquitySortComparison = ASY.ZO_SortFunction
-
+    ASY.useCustomFilter = false
     local filterfunc = ZO_Antiquity.MeetsAllScryingRequirements
     ASY.ToggleButton:SetState(BSTATE_NORMAL)
     
