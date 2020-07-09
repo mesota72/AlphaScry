@@ -205,8 +205,17 @@ end
 
 function ASY:Initialize()
 
-	SLASH_COMMANDS["/asydbg"] = ASY.ToggleDebug
+    local function OnAntiquityLeadAcquired(event, antiquityId)
+        local antiquityData = ADM:GetAntiquityData(antiquityId)
+        d("AlphaScry - found "..antiquityData.GetName())
+    end
     
+
+	SLASH_COMMANDS["/asydbg"] = ASY.ToggleDebug
+
+    
+    EM:RegisterForEvent("AlphaScry", EVENT_ANTIQUITY_LEAD_ACQUIRED, OnAntiquityLeadAcquired)
+
     -- Create Key Binding Labels
     -- ZO_CreateStringId('SI_BINDING_NAME_ALPHASCRY_LIST_HINTS', "Show Hints")	
 
