@@ -2,7 +2,7 @@ ASY = {}
 
 ASY.name = 'AlphaScry'
 ASY.displayname = 'AlphaScry'
-ASY.version = 'v0.0.2'
+ASY.version = 'v0.0.3'
 ASY.author = 'mesota'
 ASY.init = false
 ASY.accountVariableVersion = 1
@@ -207,7 +207,11 @@ function ASY:Initialize()
 
     local function OnAntiquityLeadAcquired(event, antiquityId)
         local antiquityData = ADM:GetAntiquityData(antiquityId)
-        d("AlphaScry - found "..antiquityData.GetName())
+
+        local colorDef = GetAntiquityQualityColor(antiquityData:GetQuality())
+        local name = colorDef:Colorize(antiquityData:GetName())
+
+        d("|cFFAA33AlphaScry - new lead:|r "..name)
     end
     
 

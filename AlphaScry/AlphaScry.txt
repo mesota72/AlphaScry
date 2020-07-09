@@ -1,6 +1,6 @@
-## Title: |cFFAA33AlphaScry|r v0.0.2
+## Title: |cFFAA33AlphaScry|r v0.0.3
 ## APIVersion: 100031
-## Version: 0.0.2
+## Version: 0.0.3
 ## SavedVariables: AlphaScry_Account
 ## SavedVariables: AlphaScry_Character
 ## Author: mesota and person345
