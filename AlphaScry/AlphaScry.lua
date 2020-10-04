@@ -23,6 +23,7 @@ ASY.scryFilter = {
 local EM, WM, SM = EVENT_MANAGER, WINDOW_MANAGER, SCENE_MANAGER
 local AM = ANTIQUITY_MANAGER
 local ADM = ANTIQUITY_DATA_MANAGER 
+local AJK = ANTIQUITY_JOURNAL_KEYBOARD
 
 --- Writes trace messages to the console
 -- fmt with %d, %s,
@@ -202,6 +203,10 @@ function ASY.InitButton()
 end
 
 
+function ASY:NewFunc()
+    d("In NewFunc")
+    self:OldFunc()
+end
 
 function ASY:Initialize()
 
@@ -216,6 +221,9 @@ function ASY:Initialize()
     
 
 	SLASH_COMMANDS["/asydbg"] = ASY.ToggleDebug
+
+    AJK.OldFunc = AJK.AcquireAntiquitySectionList
+    AJK.AcquireAntiquitySectionList = ASY.NewFunc
 
     
     EM:RegisterForEvent("AlphaScry", EVENT_ANTIQUITY_LEAD_ACQUIRED, OnAntiquityLeadAcquired)
