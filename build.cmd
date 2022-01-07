@@ -1,6 +1,6 @@
 @echo off
 setlocal
-set name=AlphaScry_0.0.3.zip
+set name=AlphaScry_1.0.0.zip
 
 rem -----------------
 

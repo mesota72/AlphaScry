@@ -21,8 +21,8 @@ function ASYCFD:Commit(control)
 
 	local scryFilter = ASY.scryFilter
 
-    scryFilter.showBasicLeads = getCheckState("ShowBasicLeadsCheck")
-    scryFilter.showAllZones = getCheckState("ShowAllZonesCheck")
+    scryFilter.showRequiresLead = getCheckState("ShowBasicLeadsCheck")
+    scryFilter.showInProgress = getCheckState("ShowAllZonesCheck")
     scryFilter.minimumQuality = ASYCFD.minimumQuality
 	
     ASY.ApplyFilter()
@@ -44,8 +44,8 @@ function ASYCFD:Setup(control)
 
 	local scryFilter = ASY.scryFilter
 
-    setCheckState ("ShowBasicLeadsCheck",scryFilter.showBasicLeads)
-    setCheckState ("ShowAllZonesCheck",scryFilter.showAllZones)
+    setCheckState ("ShowBasicLeadsCheck",scryFilter.showRequiresLead)
+    setCheckState ("ShowAllZonesCheck",scryFilter.showInProgress)
 
     local comboMinQuality = ZO_ComboBox_ObjectFromContainer(ctrlContent:GetNamedChild("MinQualityDropdown"))
     ASYCFD.SetupMinQualityCombo(comboMinQuality, scryFilter.minimumQuality)

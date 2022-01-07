@@ -14,7 +14,7 @@
                     		</OnClicked>
 						</Button>
 
-                        <Label name="$(parent)ShowBasicLeadsLabel" font="ZoFontGame" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" horizontalAlignment="LEFT" text="Show basic leads">
+                        <Label name="$(parent)ShowBasicLeadsLabel" font="ZoFontGame" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" horizontalAlignment="LEFT" text="Show requires lead">
 							<Anchor point="LEFT" relativeTo="$(parent)ShowBasicLeadsCheck" relativePoint="RIGHT" offsetX="5"  />
                         </Label>
 
@@ -26,7 +26,7 @@
                     		</OnClicked>
 						</Button>
 
-                        <Label name="$(parent)ShowAllZonesLabel" font="ZoFontGame" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" horizontalAlignment="LEFT" text="Show leads of all zones">
+                        <Label name="$(parent)ShowAllZonesLabel" font="ZoFontGame" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" horizontalAlignment="LEFT" text="Show in progress">
 							<Anchor point="LEFT" relativeTo="$(parent)ShowAllZonesCheck" relativePoint="RIGHT" offsetX="5"  />
                         </Label>
 

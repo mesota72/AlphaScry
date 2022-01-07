@@ -2,7 +2,7 @@ ASY = {}
 
 ASY.name = 'AlphaScry'
 ASY.displayname = 'AlphaScry'
-ASY.version = 'v0.0.3'
+ASY.version = 'v1.0.0'
 ASY.author = 'mesota'
 ASY.init = false
 ASY.accountVariableVersion = 1
@@ -13,8 +13,8 @@ ASY.useCustomFilter = false
 ASY.ZO_SortFunction = nil
 
 ASY.scryFilter = {
-    showBasicLeads = true,
-    showAllZones = true,
+    showRequiresLead = true,
+    showInProgress = true,
     minimumQuality = 1
 }
 
@@ -115,32 +115,86 @@ end
 -- based on
 -- https://github.com/esoui/esoui/blob/master/esoui/ingame/antiquities/antiquitydata.lua
 
-function ASY:CustomMeetsAllScryingRequirements()
-    -- trace ("ASY.CustomMeetsAllScryingRequirements")
+
+function ASY.FilterCore(antiquityData)
+    local scryFilter = ASY.scryFilter
+
+    -- Requires lead filter
+    if not scryFilter.showRequiresLead and antiquityData:RequiresLead() then return false end
+
+    -- Quality filter
+    if scryFilter.minimumQuality > antiquityData:GetQuality() then return false end
+
+    return not antiquityData:HasAchievedAllGoals() and antiquityData:MeetsScryingSkillRequirements() -- and antiquityData:MeetsLeadRequirements()
+end
+
+
+--- this funktion hijacks IsInCurrentPlayerZone and adds additional filters
+function ASY:CustomIsInCurrentPlayerZone()
+    -- original condition
+    if not self:IsInZone(ZO_ExplorationUtils_GetPlayerCurrentZoneId()) then return false end
 
     local scryFilter = ASY.scryFilter
 
-    -- Zone filter
-    if not scryFilter.showAllZones and not self:IsInCurrentPlayerZone() then return false end
-
     -- Requires lead filter
-    if not scryFilter.showBasicLeads and not self:RequiresLead() then return false end
+    if not scryFilter.showRequiresLead and self:RequiresLead() then return false end
 
     -- Quality filter
     if scryFilter.minimumQuality > self:GetQuality() then return false end
 
-    return not self:HasAchievedAllGoals() and self:MeetsLeadRequirements() and self:MeetsScryingSkillRequirements()
+    -- In Progress Filter
+    if not scryFilter.showInProgress and (self:GetNumGoalsAchieved() > 0) then return false end
+
+    return true
 end
+
+--- this funktion hijacks MeetsLeadRequirements and adds additional filters
+function ASY:CustomMeetsLeadRequirements()
+    -- original condition
+    if (not self:RequiresLead() or self:HasLead()) == false then return false end
+
+    local scryFilter = ASY.scryFilter
+
+    -- Requires lead filter
+    if not scryFilter.showRequiresLead and self:RequiresLead() then return false end
+
+    -- Quality filter
+    if scryFilter.minimumQuality > self:GetQuality() then return false end
+
+    return true
+end
+
+--- this funktion hijacks IsInProgress and adds additional filters
+function ASY:CustomIsInProgress() 
+    local scryFilter = ASY.scryFilter
+
+    -- Requires lead filter
+    if not scryFilter.showRequiresLead and self:RequiresLead() then return false end
+
+    -- Quality filter
+    if scryFilter.minimumQuality > self:GetQuality() then return false end
+
+    -- In Progress Filter
+    return scryFilter.showInProgress and (self:GetNumGoalsAchieved() > 0)
+end
+
 
 function ASY.ApplyFilter()
     trace ("ASY.ApplyFilter")
         
     ASY.useCustomFilter = true
-    local filterfunc = ASY.CustomMeetsAllScryingRequirements
+    local filterfuncMR = ASY.CustomMeetsLeadRequirements
+    local filterfuncPZ = ASY.CustomIsInCurrentPlayerZone
+    local filterfuncIP = ASY.CustomIsInProgress
     ASY.ToggleButton:SetState(BSTATE_PRESSED)
 
     for _, antiquityData in pairs (ADM.antiquities) do
-        antiquityData.MeetsAllScryingRequirements = filterfunc
+        -- current zone
+        antiquityData.IsInCurrentPlayerZone = filterfuncPZ
+
+        -- all zones
+        antiquityData.MeetsLeadRequirements = filterfuncMR
+        antiquityData.IsInProgress = filterfuncIP
     end
 
     ADM:RefreshAll()
@@ -150,11 +204,18 @@ function ASY.ClearFilter()
     trace ("ASY.ClearFilter")
 
     ASY.useCustomFilter = false
-    local filterfunc = ZO_Antiquity.MeetsAllScryingRequirements
+    local filterfuncPZ = ZO_Antiquity.IsInCurrentPlayerZone
+    local filterfuncMR = ZO_Antiquity.MeetsLeadRequirements
+    local filterfuncIP = ZO_Antiquity.IsInProgress
     ASY.ToggleButton:SetState(BSTATE_NORMAL)
     
     for _, antiquityData in pairs (ADM.antiquities) do
-        antiquityData.MeetsAllScryingRequirements = filterfunc
+        -- current zone
+        antiquityData.IsInCurrentPlayerZone = filterfuncPZ
+
+        -- all zones
+        antiquityData.MeetsLeadRequirements = filterfuncMR
+        antiquityData.IsInProgress = filterfuncIP
     end 
 
     ADM:RefreshAll()
@@ -167,7 +228,7 @@ function ASY.ShowChangeFilterDialog()
 end
 
 function ASY.ToggleShowAll()
-    trace ("ASY.ToggleShowAll")
+    trace ("ASY.ToggleFilter")
     ASY.useCustomFilter = not ASY.useCustomFilter
 
     if ASY.useCustomFilter then
